@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 #ifdef REDIS_MODULE_TARGET
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 
 #define TOPK_CALLOC(count, size) RedisModule_Calloc(count, size)
 #define TOPK_FREE(ptr) RedisModule_Free(ptr)

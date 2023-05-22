@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 #include <stdbool.h>
 
 #define DEFAULT_WIDTH 2.7

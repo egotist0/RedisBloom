@@ -9,7 +9,7 @@
 #include "version.h"
 #include "rm_cms.h"
 
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 
 #include <math.h>
 #include <stdlib.h>
