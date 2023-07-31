@@ -5,7 +5,7 @@
  */
 
 #define REDISMODULE_MAIN
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 
 #include "sb.h"
 #include "cf.h"

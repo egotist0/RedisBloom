@@ -27,7 +27,7 @@
 #define STRING(n) #n
 
 extern void (*RedisModule_Free)(void *ptr);
-extern void * (*RedisModule_Calloc)(size_t nmemb, size_t size);
+extern void *(*RedisModule_Calloc)(size_t nmemb, size_t size);
 
 #define BLOOM_CALLOC RedisModule_Calloc
 #define BLOOM_FREE RedisModule_Free
@@ -135,8 +135,14 @@ int bloom_init(struct bloom *bloom, uint64_t entries, double error, unsigned opt
 
     uint64_t bits;
 
+    // 根据options确定位数组的大小
     if (options & BLOOM_OPT_ENTS_IS_BITS) {
         // Size is determined by the number of bits
+        /*
+        表示entries参数表示的是位数而非元素数量，此时直接
+        根据entries计算出位数组的大小，计算方式为：bits =
+        1LLU << bloom->n2
+        */
         if (/* entries == 0 || */ entries > 64) {
             return 1;
         }
@@ -146,11 +152,13 @@ int bloom_init(struct bloom *bloom, uint64_t entries, double error, unsigned opt
         bloom->entries = bits / bloom->bpe;
 
     } else if (options & BLOOM_OPT_NOROUND) {
-        // Don't perform any rounding. Conserve memory instead
+        // 表示不对位数组大小进行任何取整操作，从而节省内存空间。此时，直接将位数组大小设为entries *
+        // bloom->bpe。 Don't perform any rounding. Conserve memory instead
         bits = bloom->bits = (uint64_t)(entries * bloom->bpe);
         bloom->n2 = 0;
 
     } else {
+        // 函数会计算出一个最接近且大于entries * bloom->bpe的2的幂次方，作为位数组大小
         double bn2 = logb(entries * bloom->bpe);
         if (bn2 > 63 || bn2 == INFINITY) {
             return 1;

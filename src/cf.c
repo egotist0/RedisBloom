@@ -4,7 +4,7 @@
  * the Server Side Public License v1 (SSPLv1).
  */
 
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 
 #define CUCKOO_MALLOC RedisModule_Alloc
 #define CUCKOO_CALLOC RedisModule_Calloc

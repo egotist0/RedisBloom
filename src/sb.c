@@ -6,7 +6,7 @@
 
 #include "sb.h"
 
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 
 #define BLOOM_CALLOC RedisModule_Calloc
 #define BLOOM_FREE RedisModule_Free

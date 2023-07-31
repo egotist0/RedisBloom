@@ -21,17 +21,17 @@ extern "C" {
  *
  */
 struct bloom {
-    uint32_t hashes;
-    uint8_t force64;
-    uint8_t n2;
-    uint64_t entries;
+    uint32_t hashes;  // hash 函数个数
+    uint8_t force64;  // 是否强制使用64位hash
+    uint8_t n2;       // hash函数参数
+    uint64_t entries; // 布隆过滤器中存储元素的个数
 
-    double error;
-    double bpe;
+    double error; // 错误率
+    double bpe;   // ln(error) / ln(2)^2
 
-    unsigned char *bf;
-    uint64_t bytes;
-    uint64_t bits;
+    unsigned char *bf; // 指向位数组的指针
+    uint64_t bytes;    // 位数组所占用的字节数
+    uint64_t bits;     // 位数组的长度
 };
 
 /** ***************************************************************************
@@ -64,6 +64,13 @@ struct bloom {
 
 // Do not round bit size to nearest power of 2. Instead, estimate bits
 // accurately.
+
+/*
+BLOOM_OPT_NOROUND：不将位数组大小调整为2的幂次方
+BLOOM_OPT_ENTS_IS_BITS：entries参数表示的是位数而非元素数量
+BLOOM_OPT_FORCE64：强制使用64位哈希函数
+BLOOM_OPT_NO_SCALING：禁用自动缩放，节省内存空间
+*/
 #define BLOOM_OPT_NOROUND 1
 
 // Entries is actually the number of bits, not the number of entries to reserve
@@ -76,12 +83,6 @@ struct bloom {
 #define BLOOM_OPT_NO_SCALING 8
 
 int bloom_init(struct bloom *bloom, uint64_t entries, double error, unsigned options);
-
-/** ***************************************************************************
- * Deprecated, use bloom_init()
- *
- */
-int bloom_init_size(struct bloom *bloom, uint64_t entries, double error, unsigned int cache_size);
 
 typedef struct {
     uint64_t a;

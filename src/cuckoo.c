@@ -102,10 +102,17 @@ static void getLookupParams(CuckooHash hash, LookupParams *params) {
     // assert(getAltHash(params->fp, params->h2, numBuckets) == params->h1);
 }
 
+/*
+计算出指定哈希值在子过滤器中对应的桶的索引
+*/
 static uint32_t SubCF_GetIndex(const SubCF *subCF, CuckooHash hash) {
     return (hash % subCF->numBuckets) * subCF->bucketSize;
 }
 
+/*
+在指定大小为 bucketSize 的桶 bucket 中查找指定的指纹 fp。
+找到了则返回该元素的指针，否则为null
+*/
 static uint8_t *Bucket_Find(CuckooBucket bucket, uint16_t bucketSize, CuckooFingerprint fp) {
     for (uint16_t ii = 0; ii < bucketSize; ++ii) {
         if (bucket[ii] == fp) {
@@ -115,6 +122,10 @@ static uint8_t *Bucket_Find(CuckooBucket bucket, uint16_t bucketSize, CuckooFing
     return NULL;
 }
 
+/*
+是在指定的子过滤器 filter 中查找指定的元素
+在子过滤器中查找元素对应的两个哈希值对应的桶中是否存在指定的指纹值
+*/
 static int Filter_Find(const SubCF *filter, const LookupParams *params) {
     uint8_t bucketSize = filter->bucketSize;
     uint64_t loc1 = SubCF_GetIndex(filter, params->h1);
@@ -123,6 +134,12 @@ static int Filter_Find(const SubCF *filter, const LookupParams *params) {
            Bucket_Find(&filter->data[loc2], bucketSize, params->fp) != NULL;
 }
 
+/*
+在指定大小为 bucketSize 的桶 bucket 中删除指定的指纹 fp
+1. 如果当前元素等于指定的指纹 fp，则将该元素设置为 CUCKOO_NULLFP（表示该位置为空），并返回 1
+表示删除成功。
+2. 如果遍历完所有元素还没有找到指定的指纹 fp，则返回 0 表示删除失败。
+*/
 static int Bucket_Delete(CuckooBucket bucket, uint16_t bucketSize, CuckooFingerprint fp) {
     for (uint16_t ii = 0; ii < bucketSize; ii++) {
         if (bucket[ii] == fp) {
@@ -133,6 +150,9 @@ static int Bucket_Delete(CuckooBucket bucket, uint16_t bucketSize, CuckooFingerp
     return 0;
 }
 
+/*
+在指定的子过滤器 filter 中删除指定的元素
+*/
 static int Filter_Delete(const SubCF *filter, const LookupParams *params) {
     uint8_t bucketSize = filter->bucketSize;
     uint64_t loc1 = SubCF_GetIndex(filter, params->h1);
@@ -185,13 +205,16 @@ uint64_t CuckooFilter_Count(const CuckooFilter *filter, CuckooHash hash) {
     return ret;
 }
 
+// 删除过滤器中的元素
 int CuckooFilter_Delete(CuckooFilter *filter, CuckooHash hash) {
     LookupParams params;
     getLookupParams(hash, &params);
     for (uint16_t ii = filter->numFilters; ii > 0; --ii) {
-        if (Filter_Delete(&filter->filters[ii - 1], &params)) {
-            filter->numItems--;
-            filter->numDeletes++;
+        // 在当前的节点上进行删除这个元素
+        if (Filter_Delete(&filter->filters[ii - 1], &params)) { // 删除成功
+            filter->numItems--;                                 // 元素总个数减少
+            filter->numDeletes++;                               // 删除的个数增加
+            // 如果删除元素超过了元素总数的10%，就需要进行合并,因为有很多空间被闲置了
             if (filter->numFilters > 1 && filter->numDeletes > (double)filter->numItems * 0.10) {
                 CuckooFilter_Compact(filter, false);
             }
@@ -201,6 +224,9 @@ int CuckooFilter_Delete(CuckooFilter *filter, CuckooHash hash) {
     return 0;
 }
 
+/*
+在指定桶中寻找有无空位
+*/
 static uint8_t *Bucket_FindAvailable(CuckooBucket bucket, uint16_t bucketSize) {
     for (uint16_t ii = 0; ii < bucketSize; ++ii) {
         if (bucket[ii] == CUCKOO_NULLFP) {

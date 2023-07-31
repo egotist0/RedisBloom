@@ -9,7 +9,7 @@
 #include <stdint.h> // uint32_t
 
 #ifdef REDIS_MODULE_TARGET
-#include "redismodule.h"
+#include "RedisModulesSDK/redismodule.h"
 #define CMS_CALLOC(count, size) RedisModule_Calloc(count, size)
 #define CMS_FREE(ptr) RedisModule_Free(ptr)
 #else
