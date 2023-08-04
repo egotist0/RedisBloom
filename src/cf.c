@@ -17,8 +17,7 @@
 
 // Get the bucket corresponding to the given position. 'offset' is modified to be the
 // actual position (beginning of bucket) where `pos` is mapped to, with respect to
-// the current filter. The filter itself is not returned directly (but can be inferred)
-// via `offset`
+// the current filter. The filter itself is not returned directly (but can be inferred) via `offset`
 static uint8_t *getBucketPos(const CuckooFilter *cf, long long pos, size_t *offset) {
     // Normalize the pos pointer to the beginning of the filter
     pos--;
@@ -30,7 +29,6 @@ static uint8_t *getBucketPos(const CuckooFilter *cf, long long pos, size_t *offs
         // Last position
         return NULL;
     }
-
     if (*offset + 1 == cf->numBuckets) {
         *offset = 0;
         if (++filterIx == cf->numFilters) {
