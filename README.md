@@ -14,11 +14,11 @@
 RedisBloom adds a set of probabilistic data structures to Redis, including Bloom filter, Cuckoo filter, Count-min sketch, Top-K, and t-digest. Using this capability, you can query streaming data without needing to store all the elements of the stream. Probabilistic data structures each answer the following questions:
 
 - Bloom filter and Cuckoo filter:
-  -  Did value _v_ already appear in the data stream?
+  -  Did value _v_ already appear in the data stream ？
 - Count-min sketch:
-  - How many times did value _v_ appear in the data stream?
+  - How many times did value _v_ appear in the data stream ?
 - Top-k:
-  - What are the _k_ most frequent values in the data stream?
+  - What are the _k_ most frequent values in the data stream ?
 - t-digest:
   - Which fraction of the values in the data stream are smaller than a given value?
   - How many values in the data stream are smaller than a given value?
