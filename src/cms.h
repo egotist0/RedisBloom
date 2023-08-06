@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include <stdint.h> // uint32_t
+#include <stdint.h>  // uint32_t
 
 #ifdef REDIS_MODULE_TARGET
 #include "RedisModulesSDK/redismodule.h"
 #define CMS_CALLOC(count, size) RedisModule_Calloc(count, size)
 #define CMS_FREE(ptr) RedisModule_Free(ptr)
 #else
+
 // #define CMS_CALLOC(count, size) calloc(count, size)
 // #define CMS_FREE(ptr) free(ptr)
 #endif
