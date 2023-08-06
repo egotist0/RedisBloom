@@ -3,7 +3,6 @@
  * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
  * the Server Side Public License v1 (SSPLv1).
  */
-
 #include "cuckoo.h"
 
 #include <string.h>
@@ -19,6 +18,7 @@
 #define CUCKOO_FREE free
 #endif
 */
+
 // int globalCuckooHash64Bit;
 
 static int CuckooFilter_Grow(CuckooFilter *filter);
